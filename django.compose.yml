@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  django:
+    build: .
+    ports:
+      - "4401:4401"
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONUNBUFFERED=1
