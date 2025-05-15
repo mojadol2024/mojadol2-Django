@@ -2,7 +2,5 @@ Django>=4.2
 djangorestframework
 openai-whisper
 ffmpeg-python
-TTS==0.22.0
 torch>=2.0.0
-soundfile
 numpy

@@ -2,10 +2,12 @@ version: "3.8"
 
 services:
   django:
-    build: .
+    image: pbl2-django:latest
+    container_name: pbl2-django
+    restart: always
+    networks:
+      - mojadol-network
     ports:
       - "4401:4401"
     volumes:
-      - .:/app
-    environment:
-      - PYTHONUNBUFFERED=1
+      - /home/bgt/pbl2/model:/home/bgt/pbl2/model
