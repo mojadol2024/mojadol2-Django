@@ -42,7 +42,7 @@ jobs:
       - name: Copy django.compose.yml
         run: |
           sshpass -p ${{ secrets.SSH_PASSWORD_PBL2 }} scp -P ${{ secrets.SSH_PORT_PBL2 }} -o StrictHostKeyChecking=no \
-          ./app.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/pbl2
+          ./django.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/pbl2
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
 
