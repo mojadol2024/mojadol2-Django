@@ -11,3 +11,8 @@ services:
       - "4401:4401"
     volumes:
       - /home/bgt/pbl2/model:/home/bgt/pbl2/model
+
+
+networks:
+  mojadol-network:
+    external: true
