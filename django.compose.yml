@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   django:
-    image: pbl2-django:latest
+    image: pbl2-django
     container_name: pbl2-django
     restart: always
     networks:
