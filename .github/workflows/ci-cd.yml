@@ -42,7 +42,7 @@ jobs:
       - name: Copy django.compose.yml
         run: |
           sshpass -p ${{ secrets.SSH_PASSWORD_PBL2 }} scp -P ${{ secrets.SSH_PORT_PBL2 }} -o StrictHostKeyChecking=no \
-          ./django.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/pbl2
+          ./django.compose.yml ${{ secrets.SSH_USERNAME_PBL2 }}@${{ secrets.SSH_HOST_PBL2 }}:/home/bgt/django
         env:
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD_PBL2 }}
 
@@ -60,10 +60,15 @@ jobs:
           script: |
             set -ex
 
+            touch /home/bgt/django/.env
+
+            echo "MODEL_PATH=${{ secrets.MODEL_PATH }}" > /home/bgt/django/.env
+            chmod 600 /home/bgt/django/.env
+
             docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
             
             # Docker 네트워크 생성 (없으면 생성)
             docker network create mojadol-network || true
 
-            docker compose -f /home/bgt/pbl2/django.compose.yml down -v --remove-orphans || true
-            docker compose -f /home/bgt/pbl2/django.compose.yml up -d --pull always --force-recreate
+            docker compose -f /home/bgt/django/django.compose.yml down -v --remove-orphans || true
+            docker compose -f /home/bgt/django/django.compose.yml up -d --pull always --force-recreate

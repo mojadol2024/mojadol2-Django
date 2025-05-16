@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'speech',
-    'ai'
+    'generate_questions',
 ]
 
 MIDDLEWARE = [
