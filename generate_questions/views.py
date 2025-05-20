@@ -20,15 +20,18 @@ tokenizer = PreTrainedTokenizerFast.from_pretrained("hyunwoongko/kobart")
 class GenerateQuestionsView(APIView):
     def post(self, request):
         cover_letter = request.data.get("coverLetter")
+        voucher_type = request.data.get("voucher")
         if not cover_letter:
             return Response({"error": "coverLetter 필드는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
+        max_len = 148 if voucher_type == "FREE" else 296
+        
         try:
             inputs = tokenizer(
                 cover_letter,
                 return_tensors="pt",
                 truncation=True,
-                max_length=512,
+                max_length=3096,
                 padding="max_length"
             )
             inputs["input_ids"].to(DEVICE)
@@ -37,7 +40,7 @@ class GenerateQuestionsView(APIView):
             with torch.no_grad():
                 output_ids = model.generate(
                     **inputs,
-                    max_length=148,
+                    max_length=max_len,
                     num_beams=4,
                     early_stopping=True,
                     length_penalty=1.2,
