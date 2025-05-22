@@ -10,8 +10,9 @@ services:
     ports:
       - "4401:4401"
     volumes:
-      - /home/bgt/django/ai-models:/home/bgt/django/ai-models
       - /home/bgt/django/.env:/app/.env
+      - /home/bgt/django/kobart_model.pth:/home/bgt/django/kobart_model.pth
+      - /home/bgt/django/shape_predictor_68_face_landmarks.dat:/home/bgt/django/shape_predictor_68_face_landmarks.dat
 
 
 networks:
