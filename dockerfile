@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     git \
     libsndfile1 \
+    cmake \
     && apt-get clean
 
 RUN pip install --no-cache-dir -r requirements.txt
