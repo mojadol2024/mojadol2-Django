@@ -9,6 +9,11 @@ RUN apt-get update && apt-get install -y \
     git \
     libsndfile1 \
     cmake \
+    build-essential \
+    libboost-all-dev \
+    libgtk-3-dev \
+    libx11-dev \
+    python3-dev \
     && apt-get clean
 
 RUN pip install --no-cache-dir -r requirements.txt
