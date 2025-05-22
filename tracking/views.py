@@ -80,15 +80,6 @@ class TrackingView(APIView):
         average_score = results["score_sum"] / results["count"]
 
         return Response({
-            "status_counts": {
-                "center": results["center"],
-                "left": results["left"],
-                "right": results["right"],
-                "blinking": results["blinking"],
-                "off": results["off"],
-                "no_face": results["no_face"]
-            },
-            "average_score": round(average_score, 2),
-            "total_frames": results["count"]
+            "score": round(average_score, 2)
         })
 

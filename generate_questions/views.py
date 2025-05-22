@@ -21,8 +21,6 @@ class GenerateQuestionsView(APIView):
     def post(self, request):
         cover_letter = request.data.get("coverLetter")
         voucher_type = request.data.get("voucher")
-        print(voucher_type)
-        print(cover_letter)
         if not cover_letter:
             return Response({"error": "coverLetter 필드는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
