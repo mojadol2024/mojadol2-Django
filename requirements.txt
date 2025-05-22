@@ -6,6 +6,5 @@ torch>=2.5.1
 numpy
 python-dotenv
 gaze_tracking
-cmake
+opencv-python==4.11.0.86
 dlib
-cv2
