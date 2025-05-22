@@ -11,7 +11,7 @@ services:
       - "4401:4401"
     volumes:
       - /home/bgt/django/ai-models:/home/bgt/django/ai-models
-      - /home/bgt/django/.env:/home/bgt/django/.env
+      - /home/bgt/django/.env:/app/.env
 
 
 networks:
