@@ -21,6 +21,8 @@ class GenerateQuestionsView(APIView):
     def post(self, request):
         cover_letter = request.data.get("coverLetter")
         voucher_type = request.data.get("voucher")
+        print(voucher_type)
+        print(cover_letter)
         if not cover_letter:
             return Response({"error": "coverLetter 필드는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -31,11 +33,11 @@ class GenerateQuestionsView(APIView):
                 cover_letter,
                 return_tensors="pt",
                 truncation=True,
-                max_length=3096,
+                max_length=1024,
                 padding="max_length"
             )
-            inputs["input_ids"].to(DEVICE)
-            inputs["attention_mask"].to(DEVICE)
+            inputs["input_ids"] = inputs["input_ids"].to(DEVICE)
+            inputs["attention_mask"] = inputs["attention_mask"].to(DEVICE)
 
             with torch.no_grad():
                 output_ids = model.generate(
