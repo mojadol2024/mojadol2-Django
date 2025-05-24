@@ -15,7 +15,7 @@ DEBUG = True
 
 
 # 접근
-ALLOWED_HOSTS = ['spring-container-name', 'localhost']
+ALLOWED_HOSTS = ['spring-container-name', 'localhost', 'pbl2-django']
 CORS_ALLOW_ALL_ORIGINS = True # 모든 도메인 허용 내부만 가능하니까
 
 # Application definition
