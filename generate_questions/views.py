@@ -23,8 +23,6 @@ class GenerateQuestionsView(APIView):
         voucher_type = request.data.get("voucher")
         if not cover_letter:
             return Response({"error": "coverLetter 필드는 필수입니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-        max_len = 148 if voucher_type == "FREE" else 296
         
         try:
             inputs = tokenizer(
@@ -40,7 +38,7 @@ class GenerateQuestionsView(APIView):
             with torch.no_grad():
                 output_ids = model.generate(
                     **inputs,
-                    max_length=max_len,
+                    max_length=296,
                     num_beams=4,
                     early_stopping=True,
                     length_penalty=1.2,
