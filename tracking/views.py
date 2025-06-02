@@ -165,13 +165,6 @@ class Command(BaseCommand):
         asyncio.run(self.consume())
         
         
-        
-        
-        
-        
-        
-        
-"""
 @method_decorator(csrf_exempt, name='dispatch')
 class TrackingView(APIView):
     parser_classes = [JSONParser]
@@ -273,4 +266,3 @@ class TrackingView(APIView):
         except Exception as e:
             logger.exception(f"치명적 오류 발생: {str(e)}")
             return Response({"error": "Internal server error"}, status=500)
-"""
