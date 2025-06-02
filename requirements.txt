@@ -13,3 +13,4 @@ scikit-learn
 aiokafka
 moviepy
 librosa
+aiohttp
