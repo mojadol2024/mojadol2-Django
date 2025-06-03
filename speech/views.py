@@ -9,6 +9,10 @@ from django.http import HttpResponse
 import os
 from moviepy import *
 import librosa
+from rest_framework.parsers import JSONParser
+import logging
+import base64
+logger = logging.getLogger(__name__)
 
 model = whisper.load_model("base")
 # 영상에서 오디오 추출
@@ -57,33 +61,45 @@ def analyze_speaking_speed(video_path):
         "feedback": feedback
     }
 class STTView(APIView):
+    parser_classes = [JSONParser]
+
     def post(self, request):
-        video_file = request.FILES.get("audio")
-        if not video_file:
-            return Response({"error": "No file uploaded"}, status=status.HTTP_400_BAD_REQUEST)
-
+        temp_path = None
         try:
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_video:
-                for chunk in video_file.chunks():
-                    temp_video.write(chunk)
-                temp_video_path = temp_video.name
+            logger.debug("POST 요청 시작")
 
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_audio:
-                temp_audio_path = temp_audio.name
+            filename = request.data.get('filename')
+            content_type = request.data.get('contentType')
+            base64_data = request.data.get('fileData')
+            logger.debug(f"받은 데이터: filename={filename}, content_type={content_type}")
 
-            # ffmpeg로 mp4 → wav 변환
-            ffmpeg.input(temp_video_path).output(temp_audio_path, ac=1, ar=16000, format='wav').overwrite_output().run(quiet=True)
-            # whisper로 stt
-            result = analyze_speaking_speed(video_file)
-            
-            response_data = {}
+            if not base64_data:
+                logger.warning("fileData 없음")
+                return Response({"error": "No file data provided"}, status=400)
 
-            for key, value in result.items():
-                response_data[key] = value
+            file_bytes = base64.b64decode(base64_data)
+            temp_path = f"/tmp/{filename}"
+            with open(temp_path, "wb") as f:
+                f.write(file_bytes)
+            logger.debug(f"파일 저장 완료: {temp_path}")
 
-            return Response(response_data, status=status.HTTP_200_OK)
+            # whisper로 STT 처리
+            result = analyze_speaking_speed(temp_path)
+            logger.debug(f"STT 처리 결과: {result}")
+
+            return Response(result, status=status.HTTP_200_OK)
+
         except Exception as e:
+            logger.exception(f"STT 처리 중 예외 발생: {str(e)}")
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        finally:
+            if temp_path and os.path.exists(temp_path):
+                os.remove(temp_path)
+                logger.debug(f"임시 비디오 파일 삭제됨: {temp_path}")
+            if 'temp_audio_path' in locals() and os.path.exists(temp_audio_path):
+                os.remove(temp_audio_path)
+                logger.debug(f"임시 오디오 파일 삭제됨: {temp_audio_path}")
 
 # 자소서 받기 -> 질문 생성 -> TTA오디오 생성 -> 오디오 db에 저장
 # 질문에 대한 답변받기 -> STT변환 -> 답변에 대한 평가모델 -> 평가결과 db에 저장 -> PDF로 출력

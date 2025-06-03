@@ -14,19 +14,19 @@ services:
       - /home/bgt/django/kobart_model.pth:/home/bgt/django/kobart_model.pth
       - /home/bgt/django/shape_predictor_68_face_landmarks.dat:/home/bgt/django/shape_predictor_68_face_landmarks.dat
 
-  django-consume:
-    image: byeongyeongtae/pbl2-django:latest
-    container_name: pbl2-django-consume
-    restart: always
-    networks:
-      - mojadol-network
-    ports:
-      - "4402:4402"
-    volumes:
-      - /home/bgt/django/.env:/app/.env
-      - /home/bgt/django/kobart_model.pth:/home/bgt/django/kobart_model.pth
-      - /home/bgt/django/shape_predictor_68_face_landmarks.dat:/home/bgt/django/shape_predictor_68_face_landmarks.dat
-    command: ["python", "manage.py", "consume"]
+  # django-consume:
+  #   image: byeongyeongtae/pbl2-django:latest
+  #   container_name: pbl2-django-consume
+  #   restart: always
+  #   networks:
+  #     - mojadol-network
+  #   ports:
+  #     - "4402:4402"
+  #   volumes:
+  #     - /home/bgt/django/.env:/app/.env
+  #     - /home/bgt/django/kobart_model.pth:/home/bgt/django/kobart_model.pth
+  #     - /home/bgt/django/shape_predictor_68_face_landmarks.dat:/home/bgt/django/shape_predictor_68_face_landmarks.dat
+  #   command: ["python", "manage.py", "consume"]
 
 networks:
   mojadol-network:

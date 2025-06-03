@@ -266,3 +266,7 @@ class TrackingView(APIView):
         except Exception as e:
             logger.exception(f"치명적 오류 발생: {str(e)}")
             return Response({"error": "Internal server error"}, status=500)
+        finally:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+                logger.debug(f"임시 파일 삭제됨: {temp_path}")
