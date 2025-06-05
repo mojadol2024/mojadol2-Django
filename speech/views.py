@@ -97,9 +97,6 @@ class STTView(APIView):
             if temp_path and os.path.exists(temp_path):
                 os.remove(temp_path)
                 logger.debug(f"임시 비디오 파일 삭제됨: {temp_path}")
-            if 'temp_audio_path' in locals() and os.path.exists(temp_audio_path):
-                os.remove(temp_audio_path)
-                logger.debug(f"임시 오디오 파일 삭제됨: {temp_audio_path}")
 
 # 자소서 받기 -> 질문 생성 -> TTA오디오 생성 -> 오디오 db에 저장
 # 질문에 대한 답변받기 -> STT변환 -> 답변에 대한 평가모델 -> 평가결과 db에 저장 -> PDF로 출력
