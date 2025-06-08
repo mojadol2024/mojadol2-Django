@@ -258,7 +258,11 @@ class TrackingView(APIView):
             logger.info(f"평균 점수: {average_score}")
 
             return Response({
-                "score": round(average_score, 2)
+                "score": round(average_score, 2),
+                "center": results["center"],
+                "left": results["left"],
+                "right": results["right"],
+                "frameCount": frame_count
             })
             
             
