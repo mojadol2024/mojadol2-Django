@@ -170,7 +170,7 @@ class TrackingView(APIView):
     parser_classes = [JSONParser]
     def post(self, request):
         try:
-            logger.debug("POST 요청 시작")
+            logger.debug("[TrackingView] POST 요청 시작")
 
             filename = request.data.get('filename')
             content_type = request.data.get('contentType')
@@ -225,8 +225,6 @@ class TrackingView(APIView):
                         is_center = gaze.is_center()
                         is_left = gaze.is_left()
                         is_right = gaze.is_right()
-
-                        logger.debug(f"frame {frame_count}: blinking={is_blinking}, center={is_center}, left={is_left}, right={is_right}")
 
                         if not any([is_center, is_left, is_right]):
                             results["no_face"] += 1

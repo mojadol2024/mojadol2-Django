@@ -66,7 +66,7 @@ class STTView(APIView):
     def post(self, request):
         temp_path = None
         try:
-            logger.debug("POST 요청 시작")
+            logger.debug("[STTView] POST 요청 시작")
 
             filename = request.data.get('filename')
             content_type = request.data.get('contentType')

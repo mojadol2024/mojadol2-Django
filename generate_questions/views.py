@@ -25,7 +25,7 @@ logger.info("토크나이저 로드 완료")
 
 class GenerateQuestionsView(APIView):
     def post(self, request):
-        logger.debug("POST 요청 시작")
+        logger.debug("[GenerateQuestionsView] POST 요청 시작")
         cover_letter = request.data.get("coverLetter")
         voucher_type = request.data.get("voucher")
         logger.debug(f"받은 데이터: voucher_type={voucher_type}, cover_letter 길이={len(cover_letter) if cover_letter else 0}")
