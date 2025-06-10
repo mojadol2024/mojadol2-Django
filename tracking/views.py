@@ -81,13 +81,13 @@ async def process_video(video_url, filename, interviewId):
 
                 if not any([is_center, is_left, is_right]):
                     results["no_face"] += 1
-                    score = 50.0
+                    score = 10.0
                 elif is_blinking:
                     results["blinking"] += 1
                     score = 60.0
                 elif is_center:
                     results["center"] += 1
-                    score = 95.0
+                    score = 100.0
                 else:
                     results["off"] += 1
                     score = 70.0
@@ -108,13 +108,15 @@ async def process_video(video_url, filename, interviewId):
         return None
 
     average_score = results["score_sum"] / results["count"]
-    logger.info(f"평균 점수: {average_score}")
-    
+    no_face_ratio = results["no_face"] / results["count"]
+    if no_face_ratio >= 0.10:
+        logger.warning(f"얼굴 미감지 비율이 10% 이상입니다: {no_face_ratio:.2%}")
+        average_score = 0.0
+
     score = round(average_score, 2)
-    
+
     await send_result_to_kafka(score, interviewId)
     return score
-
 
 async def send_result_to_kafka(score, interviewId):
     producer = AIOKafkaProducer(bootstrap_servers='pbl2-kafka1:29092,pbl2-kafka2:29093,pbl2-kafka3:29094')
@@ -122,7 +124,7 @@ async def send_result_to_kafka(score, interviewId):
     try:
         result_data = {
             'score': score,
-            'interviewId':interviewId
+            'interviewId': interviewId
         }
         await producer.send_and_wait('interview-video-result', json.dumps(result_data).encode('utf-8'))
         logger.info(f"결과 전송 성공: {result_data}")
@@ -152,7 +154,6 @@ class Command(BaseCommand):
                     score = await process_video(video_url, filename, interviewId)
                     if score is not None:
                         logger.info(f"처리 성공: 평균 점수 = {score}")
-                        # 여기서 DB 저장이나 다른 로직 추가 가능
                     else:
                         logger.warning("비디오 처리 실패")
                 except Exception as e:
@@ -163,11 +164,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         asyncio.run(self.consume())
-        
-        
+
 @method_decorator(csrf_exempt, name='dispatch')
 class TrackingView(APIView):
     parser_classes = [JSONParser]
+
     def post(self, request):
         try:
             logger.debug("[TrackingView] POST 요청 시작")
@@ -228,13 +229,13 @@ class TrackingView(APIView):
 
                         if not any([is_center, is_left, is_right]):
                             results["no_face"] += 1
-                            score = 50.0
+                            score = 10.0
                         elif is_blinking:
                             results["blinking"] += 1
                             score = 60.0
                         elif is_center:
                             results["center"] += 1
-                            score = 95.0
+                            score = 100.0
                         else:
                             results["off"] += 1
                             score = 70.0
@@ -253,8 +254,24 @@ class TrackingView(APIView):
                 return Response({"error": "No valid frames in video"}, status=400)
 
             average_score = results["score_sum"] / results["count"]
-            logger.info(f"평균 점수: {average_score}")
+            no_face_ratio = results["no_face"] / results["count"]
+            if no_face_ratio >= 0.10:
+                logger.warning(f"얼굴 미감지 비율이 10% 이상입니다: {no_face_ratio:.2%}")
+                average_score = 0.0
 
+            score = round(average_score, 2)
+            """
+            return Response({
+                "score": score,
+                "center": results["center"],
+                "blinking": results["blinking"],
+                "off": results["off"],
+                "no_face": results["no_face"],
+                "left": results["left"],
+                "right": results["right"],
+                "frameCount": frame_count
+            })
+            """
             return Response({
                 "score": round(average_score, 2),
                 "center": results["center"],
@@ -262,8 +279,6 @@ class TrackingView(APIView):
                 "right": results["right"],
                 "frameCount": frame_count
             })
-            
-            
 
         except Exception as e:
             logger.exception(f"치명적 오류 발생: {str(e)}")
