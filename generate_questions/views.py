@@ -66,7 +66,10 @@ class GenerateQuestionsView(APIView):
                 q = q.strip()
                 if len(q) > 8 and (q.endswith('.') or q.endswith('?')):
                     filtered_questions.append(q)
-            logger.info(f"생성된 질문 수: {len(filtered_questions)}")
+                    
+            limit = 5 if voucher_type == "FREE" else 10
+            filtered_questions = filtered_questions[:limit]
+            logger.info(f"생성된 질문 수: {len(filtered_questions)} (제한: {limit})")
 
             return Response({"questions": filtered_questions}, status=status.HTTP_200_OK)
 
